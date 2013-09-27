@@ -1,0 +1,4 @@
+Enabled: true
+ApiKey: 'API key here'
+interval: 90
+Debug: false

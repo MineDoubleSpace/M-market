@@ -1,0 +1,9 @@
+name: MinecraftMarket
+main: com.minecraftmarket.Market
+version: 1.3
+website: http://www.minecraftmarket.com
+commands:
+    mmreload:
+        description: reload config
+    mmcheck:
+        description: force check for new purchases
