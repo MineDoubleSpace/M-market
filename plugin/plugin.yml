@@ -7,3 +7,5 @@ commands:
         description: reload config
     mmcheck:
         description: force check for new purchases
+    mmapikey:
+        description: Changes the API KEY in the config.yml

@@ -30,6 +30,7 @@ public class Market extends JavaPlugin {
 		commands = new Commands(this);
 		getCommand("mmreload").setExecutor(commands);
 		getCommand("mmcheck").setExecutor(commands);
+		getCommand("mmapikey").setExecutor(commands);
 		
 		getConfig().options().copyDefaults(true);
         saveConfig();
