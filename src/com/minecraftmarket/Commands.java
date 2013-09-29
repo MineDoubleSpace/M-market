@@ -6,7 +6,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -60,7 +59,6 @@ public class Commands implements CommandExecutor {
 			}
 		}
 		else if (cmd.getName().equalsIgnoreCase("mmapikey")){
-			Bukkit.broadcastMessage("works");
 				if (args.length == 1){
 					String apiKey = args[0];
 				          String authenticate = "";
