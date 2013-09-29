@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -37,7 +38,7 @@ public class Commands implements CommandExecutor {
 				Gui.getInatance().showGui((Player) sender);
 				return true;
 			}
-			
+			return true;
 		}
 		if (!sender.isOp()) {
 			return false;
@@ -57,7 +58,9 @@ public class Commands implements CommandExecutor {
 				Gui.getInatance().showGui((Player) sender);
 				return true;
 			}
+		}
 		else if (cmd.getName().equalsIgnoreCase("mmapikey")){
+			Bukkit.broadcastMessage("works");
 				if (args.length == 1){
 					String apiKey = args[0];
 				          String authenticate = "";
@@ -76,6 +79,7 @@ public class Commands implements CommandExecutor {
 				               plugin.getLogger().info("Response state" + state);
 				             }
 				           }
+				           return true;
 				           }
 				         catch (Exception e) {
 				           sender.sendMessage("[" + ChatColor.DARK_GREEN + "MinecraftMarket" + ChatColor.RESET + "] Server did not authenticate, please check API-KEY.");
@@ -87,8 +91,7 @@ public class Commands implements CommandExecutor {
 				     }
 				   }
 			
-		}
-		return false;
+		return true;
 	}
 	
 	public String getJSON(String url) throws JSONException {
