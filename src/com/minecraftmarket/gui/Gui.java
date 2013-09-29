@@ -1,14 +1,8 @@
-package com.minecraftmarket;
+package com.minecraftmarket.gui;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Scanner;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -17,8 +11,10 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.minecraftmarket.Market;
+import com.minecraftmarket.managers.JsonManager;
 
 public class Gui {
 	
@@ -49,7 +45,7 @@ public class Gui {
 		ItemStack pack = null;
 		int max = 0;
 		try {
-			String gui = getJSON("http://www.minecraftmarket.com/api/" + plugin.ApiKey + "/gui", plugin);
+			String gui = JsonManager.getJSON("http://www.minecraftmarket.com/api/" + plugin.ApiKey + "/gui", plugin);
 			if (plugin.debug) {
 				plugin.getLogger().info("Response: " + gui);
 			}
@@ -118,33 +114,5 @@ public class Gui {
 			}
 		}
 		return pack;
-	}
-	
-	public String getJSON(String url, Market plugin) throws JSONException {
-	    try {
-	        URL u = new URL(url);
-	        HttpURLConnection c = (HttpURLConnection) u.openConnection();
-	        c.setRequestMethod("GET");
-	        c.setRequestProperty("Content-length", "0");
-	        c.setRequestProperty("Accept", "application/json");
-	        c.setUseCaches(false);
-	        c.setAllowUserInteraction(false);
-	        c.setConnectTimeout(10000);
-	        c.setReadTimeout(10000);
-	        c.connect();
-	        int status = c.getResponseCode();
-	        plugin.getLogger().info("Response Message: " + c.getResponseMessage());
-	        switch (status) {
-	            case 200:
-	            case 201:
-	            	Scanner s = new Scanner(c.getInputStream());
-	            	s.useDelimiter("\\Z");
-	            	return s.next();
-	        }
-
-	    } catch (MalformedURLException ex) {
-	    } catch (IOException ex) {
-	    }
-	    return "";
 	}
 }

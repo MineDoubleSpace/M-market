@@ -1,4 +1,4 @@
-package com.minecraftmarket;
+package com.minecraftmarket.listeners;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -10,6 +10,8 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
+
+import com.minecraftmarket.Market;
 
 public class CommandChecker extends BukkitRunnable {
 
