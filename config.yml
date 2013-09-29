@@ -1,0 +1,22 @@
+    
+     # == Minecraft Market Config! == #
+   
+# Enable/Disable the plugin
+Enabled: true
+
+
+# APIKEY,for this server that was generated in your Minecraft Market control panel.
+ApiKey: 'API key here'
+
+
+# interval for checking store updates
+interval: 90
+
+
+#Enable/Disable GUI(Inventory Store)
+Enabled-GUI: true
+
+
+# Enable/Disable Debugging mode
+Debug: false
+

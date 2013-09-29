@@ -84,5 +84,7 @@ public class CommandChecker extends BukkitRunnable {
 			}
 		}
 	}
+	
+	
 
 }
