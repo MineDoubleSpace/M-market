@@ -119,6 +119,7 @@ public class Commands implements CommandExecutor {
 	       plugin.ApiKey = apiKey;
 	       plugin.getConfig().set("ApiKey", apiKey);
 	       plugin.saveConfig();
+	       plugin.reload();
 	       sender.sendMessage("[" + ChatColor.DARK_GREEN + "MinecraftMarket" + ChatColor.RESET + "] Server authenticated with Minecraft Market.");
 	       if (plugin.debug) {
 	         plugin.getLogger().info("Response: " + authenticate);
