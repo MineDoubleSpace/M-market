@@ -1,4 +1,4 @@
-package com.minecraftmarket.listeners;
+package com.minecraftmarket;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -11,12 +11,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONArray;
 
-import com.minecraftmarket.Market;
-
 public class CommandChecker extends BukkitRunnable {
 
 	private Market plugin;
-	
 	public CommandChecker(Market plugin) {
 		this.plugin = plugin;
 	}
