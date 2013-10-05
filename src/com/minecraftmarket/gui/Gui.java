@@ -44,6 +44,7 @@ public class Gui {
 	public ItemStack createGui(Market plugin, int num){
 		ItemStack pack = null;
 		int max = 0;
+//		int ID = 0;
 		try {
 			String gui = JsonManager.getJSON("http://www.minecraftmarket.com/api/" + plugin.ApiKey + "/gui", plugin);
 			if (plugin.debug) {
@@ -52,7 +53,7 @@ public class Gui {
 			JSONObject json = new JSONObject(gui);
 			JSONArray jsonresult = json.optJSONArray("result");
 			if (jsonresult != null) {
-				max = jsonresult.length();
+				max = jsonresult.length();		
 				if (max <= 9){
 					inv = Bukkit.getServer().createInventory(null, 9, ChatColor.DARK_GRAY + ""+ ChatColor.BOLD +"Minecraft Market");
 				}else if (max <= 18){
@@ -103,16 +104,18 @@ public class Gui {
 					i1 = pack;
 					inv.setItem(i, i1);
 					num++;
-			}
+				}
+				
+				}
 
 					
 					
-			}
 		}catch (Exception e) {
 			if (plugin.debug) {
 				e.printStackTrace();
 			}
 		}
+		
 		return pack;
 	}
 }

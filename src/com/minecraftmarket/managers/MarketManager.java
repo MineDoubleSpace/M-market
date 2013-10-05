@@ -6,6 +6,7 @@ import com.minecraftmarket.commands.Commands;
 import com.minecraftmarket.commands.StoreCommand;
 import com.minecraftmarket.gui.Gui;
 import com.minecraftmarket.gui.GuiListener;
+import com.minecraftmarket.signs2.SignChecker;
 
 public class MarketManager {
 	
@@ -21,11 +22,14 @@ public class MarketManager {
 		plugin.interval =  Math.max(plugin.interval, 30L);
 		try{ 
 			plugin.isGUIEnabled = plugin.config.getBoolean("Enabled-GUI");
+			plugin.isAutoUpdate = plugin.config.getBoolean("Auto-update");		
 		}catch (Exception e){
 			if (plugin.debug){
 				e.printStackTrace();
 			}else{
 				plugin.getLogger().info("Error on config file! Did you update it??");
+				plugin.isGUIEnabled = true;
+				plugin.isAutoUpdate = false;
 			}
 		}
 		
@@ -36,7 +40,7 @@ public class MarketManager {
 		else {
 			plugin.getLogger().info("Invalid API Key! Please set the correct key in config.yml and use /mmreload to reload your settings");
 		}
-		Gui.getInatance().setupGUI(plugin);
+		//Gui.getInatance().setupGUI(plugin);
 		
 	}
 	
@@ -47,6 +51,7 @@ public class MarketManager {
 		plugin.getCommand("store").setExecutor(new StoreCommand(plugin));
 		
 		plugin.getServer().getPluginManager().registerEvents(new GuiListener(plugin), plugin);
+		plugin.getServer().getPluginManager().registerEvents(new SignChecker(plugin), plugin);
 		
 		plugin.saveDefaultConfig();
 		plugin.reload();

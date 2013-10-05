@@ -8,7 +8,7 @@ public class CommandManager {
 	
 	
 	public static void sendHelp(CommandSender sender){
-		sender.sendMessage("Help");
+		sender.sendMessage("");
 		// send help
 	}
 	
