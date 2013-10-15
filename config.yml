@@ -6,17 +6,24 @@ Enabled: true
 
 
 # APIKEY,for this server that was generated in your Minecraft Market control panel.
-ApiKey: 'API key here'
+ApiKey: API key here
 
 
 # interval for checking store updates
-interval: 90
+Interval: 90
 
 
 #Enable/Disable GUI(Inventory Store)
 Enabled-GUI: true
 
 
+#Shop-Command, this command will open In-Game shop. Warning: Must start with "/<command>"
+Shop-Command: /shop
+
+
+#This will update MinecraftMarket, highly recommended to keep you updated
+auto-update: true
+
+
 # Enable/Disable Debugging mode
 Debug: false
-
