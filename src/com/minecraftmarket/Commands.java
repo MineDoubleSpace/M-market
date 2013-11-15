@@ -12,6 +12,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.minecraftmarket.gui.Gui;
+import com.minecraftmarket.manager.ChatManager;
+import com.minecraftmarket.manager.JsonManager;
 
 public class Commands implements CommandExecutor, Listener {
 
@@ -45,11 +47,9 @@ public class Commands implements CommandExecutor, Listener {
 	}
 
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String label,
-			String[] args) {
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!(sender.isOp() || sender.hasPermission("minecraftmarket.admin"))) {
-			sender.sendMessage(ChatColor.DARK_RED
-					+ getMsg("messages.no-permissions"));
+			sender.sendMessage(ChatColor.DARK_RED + getMsg("messages.no-permissions"));
 			return true;
 		}
 		if (cmd.getName().equalsIgnoreCase("mm")) {
@@ -60,15 +60,13 @@ public class Commands implements CommandExecutor, Listener {
 
 			if (args[0].equalsIgnoreCase("reload")) {
 				plugin.reload();
-				sender.sendMessage(ChatManager.getInstance().prefix
-						+ getMsg("messages.reload"));
+				sender.sendMessage(ChatManager.getInstance().prefix + getMsg("messages.reload"));
 				return true;
 			}
 
 			if (args[0].equalsIgnoreCase("check")) {
 				new CommandChecker(plugin).runTaskAsynchronously(plugin);
-				sender.sendMessage(ChatManager.getInstance().prefix
-						+ getMsg("messages.check"));
+				sender.sendMessage(ChatManager.getInstance().prefix + getMsg("messages.check"));
 				return true;
 			}
 
@@ -79,8 +77,7 @@ public class Commands implements CommandExecutor, Listener {
 
 			if (args[0].equalsIgnoreCase("version")) {
 				String v = plugin.getDescription().getVersion();
-				sender.sendMessage(ChatManager.getInstance().prefix
-						+ " Version " + v);
+				sender.sendMessage(ChatManager.getInstance().prefix + " Version " + v);
 			}
 
 		}
@@ -96,9 +93,7 @@ public class Commands implements CommandExecutor, Listener {
 			String apiKey = args[1];
 			String authenticate = "";
 			try {
-				authenticate = JsonManager
-						.getJSON("http://www.minecraftmarket.com/api/" + apiKey
-								+ "/auth");
+				authenticate = JsonManager.getJSON("http://www.minecraftmarket.com/api/" + apiKey + "/auth");
 				JSONObject json = new JSONObject(authenticate);
 				JSONArray jsonresult = json.optJSONArray("result");
 				String state = jsonresult.getJSONObject(0).getString("status");
@@ -106,18 +101,16 @@ public class Commands implements CommandExecutor, Listener {
 					plugin.ApiKey = apiKey;
 					plugin.getConfig().set("ApiKey", apiKey);
 					plugin.saveConfig();
-					sender.sendMessage(ChatManager.getInstance().prefix
-							+ " Server authenticated with Minecraft Market.");
+					sender.sendMessage(ChatManager.getInstance().prefix + " Server authenticated with Minecraft Market.");
 					if (plugin.debug) {
 						plugin.getLogger().info("Response: " + authenticate);
-						plugin.getLogger().info("Response state" + state);
+						plugin.getLogger().info("Response state " + state);
 					}
 				}
 				plugin.reload();
 				return;
 			} catch (Exception e) {
-				sender.sendMessage(ChatManager.getInstance().prefix
-						+ " Server did not authenticate, please check API-KEY.");
+				sender.sendMessage(ChatManager.getInstance().prefix + " Server did not authenticate, please check API-KEY.");
 				if (plugin.debug) {
 					e.printStackTrace();
 				}

@@ -10,14 +10,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.minecraftmarket.JsonManager;
 import com.minecraftmarket.Market;
+import com.minecraftmarket.manager.JsonManager;
 
 public class Board {
 	
 	
 	public Scoreboard Sboard;
-	Market plugin;
 	
 	public Scoreboard getScoreboard (Market plugin){
 		Scoreboard board = null;

@@ -6,8 +6,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import com.minecraftmarket.ChatManager;
 import com.minecraftmarket.Market;
+import com.minecraftmarket.manager.ChatManager;
 
 public class GuiListener implements Listener {
 
@@ -32,8 +32,7 @@ public class GuiListener implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		try {
-			if (e.getInventory().getName().contains("Category: ")
-					|| e.getInventory().getName().equals("Categories")) {
+			if (e.getInventory().getName().contains("Category: ") || e.getInventory().getName().equals("Categories")) {
 				e.setCancelled(true);
 				if (e.getCurrentItem() == null) {
 					e.setCancelled(true);
@@ -56,9 +55,7 @@ public class GuiListener implements Listener {
 				String[] id = name.split(": ");
 				int id1 = Integer.parseInt(id[1]);
 				String url = gui.urlMap.get(id1);
-				player.sendMessage(chat.prefix + ChatColor.GOLD
-						+ getMsg("shop.item-url") + ChatColor.AQUA + ""
-						+ ChatColor.ITALIC + ChatColor.UNDERLINE + url);
+				player.sendMessage(chat.prefix + ChatColor.GOLD + getMsg("shop.item-url") + ChatColor.AQUA + "" + ChatColor.ITALIC + ChatColor.UNDERLINE + url);
 				e.getWhoClicked().closeInventory();
 				e.setCancelled(true);
 				return;

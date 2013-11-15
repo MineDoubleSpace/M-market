@@ -1,4 +1,4 @@
-package com.minecraftmarket;
+package com.minecraftmarket.manager;
 
 import java.io.*;
 import java.lang.Runnable;
@@ -6,13 +6,17 @@ import java.lang.Thread;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.XMLEvent;
+
 import org.bukkit.configuration.file.YamlConfiguration;
 
-public class Updater {
+import com.minecraftmarket.Market;
+
+public class UpdateManager {
 	private Market plugin;
 	private UpdateType type;
 	private String versionTitle;
@@ -29,7 +33,7 @@ public class Updater {
 	private static final int BYTE_SIZE = 1024;
 	private String updateFolder = YamlConfiguration.loadConfiguration(
 			new File("bukkit.yml")).getString("settings.update-folder");
-	private Updater.UpdateResult result = Updater.UpdateResult.SUCCESS;
+	private UpdateManager.UpdateResult result = UpdateManager.UpdateResult.SUCCESS;
 	private static final String TITLE = "title";
 	private static final String LINK = "link";
 	private static final String ITEM = "item";
@@ -42,7 +46,7 @@ public class Updater {
 		DEFAULT, NO_VERSION_CHECK, NO_DOWNLOAD
 	}
 
-	public Updater(Market plugin, String slug, File file, UpdateType type,boolean announce) {
+	public UpdateManager(Market plugin, String slug, File file, UpdateType type,boolean announce) {
 		this.plugin = plugin;
 		this.type = type;
 		this.announce = announce;
@@ -51,13 +55,13 @@ public class Updater {
 			url = new URL(DBOUrl + slug + "/files.rss");
 		} catch (MalformedURLException ex) {
 			plugin.getLogger().warning("Error checking for updates");
-			result = Updater.UpdateResult.FAIL_BADSLUG;
+			result = UpdateManager.UpdateResult.FAIL_BADSLUG;
 		}
 		thread = new Thread(new UpdateRunnable());
 		thread.start();
 	}
 
-	public Updater.UpdateResult getResult() {
+	public UpdateManager.UpdateResult getResult() {
 		waitForThread();
 		return result;
 	}
@@ -115,7 +119,7 @@ public class Updater {
 						"Finished updating! please restart to apply changes.");
 		} catch (Exception ex) {
 			plugin.getLogger().warning("Update unsuccessful.");
-			result = Updater.UpdateResult.FAIL_DOWNLOAD;
+			result = UpdateManager.UpdateResult.FAIL_DOWNLOAD;
 		} finally {
 			try {
 				if (in != null) {
@@ -171,7 +175,7 @@ public class Updater {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			plugin.getLogger().warning("Updater failed connecting to webstie");
-			result = Updater.UpdateResult.FAIL_DBO;
+			result = UpdateManager.UpdateResult.FAIL_DBO;
 			return null;
 		}
 		return download;
@@ -191,7 +195,7 @@ public class Updater {
 				}
 				if (hasTag(version) || version.equalsIgnoreCase(remoteVersion)
 						|| curVer >= remVer) {
-					result = Updater.UpdateResult.NO_UPDATE;
+					result = UpdateManager.UpdateResult.NO_UPDATE;
 					return false;
 				}
 			} else {
@@ -206,7 +210,7 @@ public class Updater {
 								"Files uploaded to BukkitDev should contain the version number, seperated from the name by a 'v', such as PluginName v1.0");
 				plugin.getLogger().warning(
 						"Please notify the author of this error.");
-				result = Updater.UpdateResult.FAIL_NOVERSION;
+				result = UpdateManager.UpdateResult.FAIL_NOVERSION;
 				return false;
 			}
 		}

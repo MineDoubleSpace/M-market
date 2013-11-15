@@ -11,9 +11,9 @@ import org.bukkit.scoreboard.Scoreboard;
 import com.minecraftmarket.Market;
 
 public class BoardTask extends BukkitRunnable implements Listener {
-	
-	public Market plugin = new Market();
-	
+
+	public Market plugin;
+
 	public BoardTask(Market plugin) {
 		this.plugin = plugin;
 	}
@@ -21,13 +21,15 @@ public class BoardTask extends BukkitRunnable implements Listener {
 	@Override
 	public void run() {
 		Scoreboard board = new Board().getScoreboard(plugin);
-		for (Player player: Bukkit.getOnlinePlayers()){
+		for (Player player : Bukkit.getOnlinePlayers()) {
 			player.setScoreboard(board);
 		}
-		
+
 	}
-	@EventHandler 
-	public void onPlayerJoin(PlayerJoinEvent event){
+
+	
+	@EventHandler
+	public void onPlayerJoin(PlayerJoinEvent event) {
 		Scoreboard board = new Board().getScoreboard(plugin);
 		event.getPlayer().setScoreboard(board);
 	}

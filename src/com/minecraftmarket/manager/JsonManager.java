@@ -1,4 +1,4 @@
-package com.minecraftmarket;
+package com.minecraftmarket.manager;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 
 public class JsonManager {
@@ -36,5 +37,11 @@ public class JsonManager {
 	    }
 	    return "";
 	}
+	
+	public String getJsonString(JSONArray jsonresult, int i, String args0)
+			throws JSONException {
+		return jsonresult.getJSONObject(1).getString(args0);
+	}
+	
 
 }

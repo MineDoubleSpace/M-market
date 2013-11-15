@@ -1,4 +1,4 @@
-package com.minecraftmarket;
+package com.minecraftmarket.manager;
 
 /*
  * Copyright 2011-2013 Tyler Blair. All rights reserved.

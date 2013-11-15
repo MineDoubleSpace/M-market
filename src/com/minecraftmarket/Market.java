@@ -1,122 +1,169 @@
 package com.minecraftmarket;
 
-import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.minecraftmarket.board.BoardTask;
 import com.minecraftmarket.gui.Gui;
 import com.minecraftmarket.gui.GuiListener;
-import com.minecraftmarket.signs.SignsTask;
+import com.minecraftmarket.manager.ChatManager;
+import com.minecraftmarket.manager.PluginMetric;
+import com.minecraftmarket.manager.UpdateManager;
 
 public class Market extends JavaPlugin {
 	public String ApiKey = "API key here";
 	public Long interval = 60L;
-	private Commands commands;
-	@SuppressWarnings("unused")
-	private BukkitTask checkerTask;
+	public BukkitTask checkerTask;
 	public FileConfiguration config;
 	public boolean debug = false;
-	public String version;
 	public boolean isGUIEnabled;
 	public String shopCommand;
 	public boolean canUpdate = true;
-
-	public String getDataFolderPath() {
-		return getDataFolder().getAbsolutePath() + File.separatorChar;
-	}
+	private static Market instance;
 
 	@Override
 	public void onDisable() {
-		// checkerTask.cancel();
-		getServer().getScheduler().cancelTasks(this);
-		getLogger().info("Plugin disabled");
+		stopTasks();
+
 	}
 
 	@Override
 	public void onEnable() {
-		commands = new Commands(this);
-		getCommand("mm").setExecutor(commands);
+		registerCommands();
+
 		saveDefaultConfig();
-		ChatManager.getInstance().SetupDefaultLanguage(this);
 
-		getServer().getPluginManager().registerEvents(new GuiListener(this),this);
-		getServer().getPluginManager().registerEvents(new Commands(this), this);
-		getServer().getPluginManager().registerEvents(new BoardTask(this), this);
-		getServer().getPluginManager().registerEvents(new SignsTask(this), this);
+		saveDefaultLanuage();
+
+		registerEvents();
+
 		reload();
-		
-		//Plugin metric start
-		try {
-			PluginMetric metrics = new PluginMetric(this);
-			metrics.start();
-		} catch (IOException e) {}
-		
-		//Auto update check
-		if (this.canUpdate) {
-		new Updater(this, "minecraft-market-free-donation",this.getFile(), Updater.UpdateType.DEFAULT, true);
-		}
 
-		checkerTask = new CommandChecker(this).runTaskTimerAsynchronously(this,	600L, interval * 20L);
-		new BoardTask(this).runTaskTimerAsynchronously(this,600L, interval * 20L);
-		Bukkit.getScheduler().scheduleSyncRepeatingTask(this, new SignsTask(this), 20L, 20L);
-		//new SignsTask(this).runTaskTimersynchronously(this, 60L, 100L);
+		startMetrics();
+
+		startUpdate();
+
+		startTasks();
+
 		getLogger().info("Plugin enabled");
 	}
-		
-
 
 	public void reload() {
-		ChatManager.getInstance().reloadLanguage();
-		reloadConfig();
-		config = this.getConfig();
-		version = this.getDescription().getVersion();
-		ApiKey = config.getString("ApiKey");
-		debug = config.getBoolean("Debug", false);
-		interval = config.getLong("Interval", 90L);
-		interval = Math.max(interval, 30L);
-		isGUIEnabled = config.getBoolean("Enabled-GUI");
-		shopCommand = config.getString("Shop-Command");
-		canUpdate = config.getBoolean("auto-update");
-		if (shopCommand == null) {
-			shopCommand = "/shop";
-		}
 
-		getLogger().info("Using interval: " + interval);
-		if (ApiKey.matches("[0-9a-f]+") && ApiKey.length() == 32) {
-			getLogger().info("Using API Key: " + ApiKey);
-		} else {
-			getLogger()
-					.info("Invalid API Key! Please set the correct key in config.yml and use /mm reload to reload your settings");
-		}
-		if (isGUIEnabled) {
-			Gui.getInatance().setupGUI(this);
-		}
+		loadConfigOptions();
+
+		authApi();
+
+		startGUI(this);
+
 	}
 
 	public void executeCommand(final String cmd) {
 		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-				@Override
-				public void run() {
+			@Override
+			public void run() {
 				getServer().dispatchCommand(getServer().getConsoleSender(), cmd);
 			}
 		});
 	}
 
-	public void saveFiles() {
-		File cfile = new File(getDataFolder(), "config.yml");
-		try {
-			config.save(cfile);
-		} catch (IOException e) {
-			Bukkit.getServer().getLogger()
-					.severe(ChatColor.DARK_RED + "Could not save config.yml");
+	private void loadConfigOptions() {
+		reloadConfig();
+		this.config = this.getConfig();
+		this.ApiKey = config.getString("ApiKey");
+		this.debug = config.getBoolean("Debug", false);
+		this.interval = config.getLong("Interval", 90L);
+		this.interval = Math.max(interval, 30L);
+		this.isGUIEnabled = config.getBoolean("Enabled-GUI", true);
+		this.shopCommand = config.getString("Shop-Command", "/shop");
+		this.canUpdate = config.getBoolean("auto-update", true);
+	}
+
+	private void registerEvents() {
+		getServer().getPluginManager().registerEvents(new GuiListener(this), this);
+		getServer().getPluginManager().registerEvents(new Commands(this), this);
+		getServer().getPluginManager().registerEvents(new BoardTask(this), this);
+	}
+
+	private void authApi() {
+		if (ApiKey.matches("[0-9a-f]+") && ApiKey.length() == 32) {
+			getLogger().info("Using API Key: " + ApiKey);
+			getInstance().ApiKey = this.ApiKey;
+			getInstance().debug = this.debug;
+		} else {
+			getLogger().warning("Invalid API Key! Use \"/MM APIKEY <APIKEY>\" to setup your APIKEY");
 		}
+	}
+
+	private void startMetrics() {
+		try {
+			PluginMetric metrics = new PluginMetric(this);
+			metrics.start();
+		} catch (IOException e) {
+			if (debug) {
+				getLogger().warning("Error starting Plugin Metrics");
+			}
+		}
+	}
+
+	private void startUpdate() {
+		if (this.canUpdate) {
+			new UpdateManager(this, "minecraft-market-free-donation", this.getFile(), UpdateManager.UpdateType.DEFAULT, true);
+		} else {
+			if (debug)
+				getLogger().warning("Auto Update disabled!");
+		}
+	}
+
+	private void startGUI(final Market plugin) {
+		if (isGUIEnabled) {
+			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
+				public void run() {
+					Gui.getInatance().setupGUI(plugin);
+				}
+			}, 20L);
+
+		}
+	}
+
+	private void runCommandChecker() {
+		checkerTask = new CommandChecker(this).runTaskTimerAsynchronously(this, 600L, interval * 20L);
+	}
+
+	private void runBoards() {
+		new BoardTask(this).runTaskTimerAsynchronously(this, 600L, interval * 20L);
+	}
+
+	private void startTasks() {
+		runCommandChecker();
+		runBoards();
+	}
+
+	private void registerCommands() {
+		getCommand("mm").setExecutor(new Commands(this));
+	}
+
+	private void saveDefaultLanuage() {
+		ChatManager.getInstance().SetupDefaultLanguage(this);
+	}
+
+	public BukkitTask getCheckerTask() {
+		return checkerTask;
+	}
+
+	private void stopTasks() {
+		getServer().getScheduler().cancelTasks(this);
+		getLogger().info("Plugin disabled");
+	}
+
+	public static Market getInstance() {
+		if (instance == null)
+			instance = new Market();
+		return instance;
 	}
 
 }

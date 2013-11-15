@@ -1,10 +1,12 @@
-package com.minecraftmarket;
+package com.minecraftmarket.manager;
 
 import java.io.File;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.minecraftmarket.Market;
 
 public class ChatManager {
 
@@ -30,6 +32,7 @@ public class ChatManager {
 		lang = YamlConfiguration.loadConfiguration(langFile);
 		prefix = ChatColor.translateAlternateColorCodes('&', getLanguage()
 				.getString("messages.prefix"));
+		reloadLanguage();
 	}
 
 	public FileConfiguration getLanguage() {
