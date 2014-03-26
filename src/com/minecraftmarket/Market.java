@@ -2,157 +2,148 @@ package com.minecraftmarket;
 
 import java.io.IOException;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
 
-import com.minecraftmarket.board.BoardTask;
-import com.minecraftmarket.gui.Gui;
+import com.minecraftmarket.command.CommandTask;
 import com.minecraftmarket.gui.GuiListener;
-import com.minecraftmarket.manager.ChatManager;
-import com.minecraftmarket.manager.PluginMetric;
-import com.minecraftmarket.manager.UpdateManager;
+import com.minecraftmarket.gui.GuiTask;
+import com.minecraftmarket.mcommands.Commands;
+import com.minecraftmarket.signs.SignListener;
+import com.minecraftmarket.signs.SignsTask;
+import com.minecraftmarket.util.Chat;
+import com.minecraftmarket.util.Init;
+import com.minecraftmarket.util.Log;
+import com.minecraftmarket.util.Metric;
+import com.minecraftmarket.util.Settings;
+import com.minecraftmarket.util.Update;
 
 public class Market extends JavaPlugin {
-	public String ApiKey = "API key here";
-	public Long interval = 60L;
-	public BukkitTask checkerTask;
-	public FileConfiguration config;
-	public boolean debug = false;
-	public boolean isGUIEnabled;
-	public String shopCommand;
-	public boolean canUpdate = true;
+	private Long interval;
+	private FileConfiguration config;
+	private String shopCommand;
+	private boolean update;
+	private boolean isBoardEnabled;
+	private boolean isSignEnabled;
+	private boolean isGuiEnabled;
 	private static Market instance;
-
+	private CommandTask commandTask;
+	
 	@Override
 	public void onDisable() {
 		stopTasks();
-
 	}
 
 	@Override
 	public void onEnable() {
-		registerCommands();
+		try {
+			registerCommands();
 
-		saveDefaultConfig();
+			saveDefaultSettings();
 
-		saveDefaultLanuage();
+			registerEvents();
 
-		registerEvents();
+			reload();
 
-		reload();
+			startMetrics();
 
-		startMetrics();
+			startUpdate();
 
-		startUpdate();
+			startTasks();
 
-		startTasks();
-
-		getLogger().info("Plugin enabled");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void reload() {
-
+		
+		Init.start();
+		
 		loadConfigOptions();
 
-		authApi();
+		if (authApi()) {
 
-		startGUI(this);
+			startGUI();
+
+			startSignTasks();
+		}
 
 	}
 
-	public void executeCommand(final String cmd) {
-		getServer().getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-			@Override
-			public void run() {
-				getServer().dispatchCommand(getServer().getConsoleSender(), cmd);
-			}
-		});
-	}
 
 	private void loadConfigOptions() {
-		reloadConfig();
-		this.config = this.getConfig();
-		this.ApiKey = config.getString("ApiKey");
-		this.debug = config.getBoolean("Debug", false);
-		this.interval = config.getLong("Interval", 90L);
-		this.interval = Math.max(interval, 30L);
-		this.isGUIEnabled = config.getBoolean("Enabled-GUI", true);
+		Chat.get().SetupDefaultLanguage();
+		config = Settings.get().getConfig();
+		Api.setApi(config.getString("ApiKey", "Apikey here"));
+		this.interval = Math.max(config.getLong("Interval", 90L), 10L);
+		this.isGuiEnabled = config.getBoolean("Enabled-GUI", true);
 		this.shopCommand = config.getString("Shop-Command", "/shop");
-		this.canUpdate = config.getBoolean("auto-update", true);
+		this.update = config.getBoolean("Auto-update", true);
+		this.isBoardEnabled = false;
+		this.isSignEnabled = config.getBoolean("Enabled-signs", true);
+		Log.setDebugging(config.getBoolean("Debug", false));
 	}
 
 	private void registerEvents() {
-		getServer().getPluginManager().registerEvents(new GuiListener(this), this);
-		getServer().getPluginManager().registerEvents(new Commands(this), this);
-		getServer().getPluginManager().registerEvents(new BoardTask(this), this);
+		getServer().getPluginManager().registerEvents(new GuiListener(), this);
+		getServer().getPluginManager().registerEvents(new ShopCommand(), this);
+		getServer().getPluginManager().registerEvents(new SignListener(), this);
 	}
 
-	private void authApi() {
-		if (ApiKey.matches("[0-9a-f]+") && ApiKey.length() == 32) {
-			getLogger().info("Using API Key: " + ApiKey);
-			getInstance().ApiKey = this.ApiKey;
-			getInstance().debug = this.debug;
+	private boolean authApi() {
+		if (Api.authAPI(Api.getKey())) {
+			getLogger().info("Using API Key: " + Api.getKey());
+			return true;
 		} else {
 			getLogger().warning("Invalid API Key! Use \"/MM APIKEY <APIKEY>\" to setup your APIKEY");
+			return false;
 		}
 	}
 
 	private void startMetrics() {
 		try {
-			PluginMetric metrics = new PluginMetric(this);
+			Metric metrics = new Metric(this);
 			metrics.start();
 		} catch (IOException e) {
-			if (debug) {
-				getLogger().warning("Error starting Plugin Metrics");
-			}
+			Log.log(e);
 		}
 	}
 
 	private void startUpdate() {
-		if (this.canUpdate) {
-			new UpdateManager(this, "minecraft-market-free-donation", this.getFile(), UpdateManager.UpdateType.DEFAULT, true);
-		} else {
-			if (debug)
-				getLogger().warning("Auto Update disabled!");
+		if (this.update) {
+			new Update(this, "minecraft-market-free-donation", this.getFile(), Update.UpdateType.DEFAULT, true);
 		}
 	}
 
-	private void startGUI(final Market plugin) {
-		if (isGUIEnabled) {
-			Bukkit.getScheduler().scheduleSyncDelayedTask(this, new Runnable() {
-				public void run() {
-					Gui.getInatance().setupGUI(plugin);
-				}
-			}, 20L);
+	private void startGUI() {
+		if (isGuiEnabled) {
+			new GuiTask().runTaskLater(this, 20L);
 
 		}
 	}
 
 	private void runCommandChecker() {
-		checkerTask = new CommandChecker(this).runTaskTimerAsynchronously(this, 600L, interval * 20L);
+		commandTask = new CommandTask();
+		commandTask.runTaskTimerAsynchronously(this, 600L, interval * 20L);
 	}
 
-	private void runBoards() {
-		new BoardTask(this).runTaskTimerAsynchronously(this, 600L, interval * 20L);
+	private void startSignTasks() {
+		if (isSignEnabled()) {
+			new SignsTask().startSignTask();
+		}
 	}
 
 	private void startTasks() {
 		runCommandChecker();
-		runBoards();
 	}
 
 	private void registerCommands() {
-		getCommand("mm").setExecutor(new Commands(this));
+		getCommand("mm").setExecutor(new Commands());
 	}
 
-	private void saveDefaultLanuage() {
-		ChatManager.getInstance().SetupDefaultLanguage(this);
-	}
-
-	public BukkitTask getCheckerTask() {
-		return checkerTask;
+	private void saveDefaultSettings() {
+		Settings.get().LoadSettings();
 	}
 
 	private void stopTasks() {
@@ -160,10 +151,69 @@ public class Market extends JavaPlugin {
 		getLogger().info("Plugin disabled");
 	}
 
-	public static Market getInstance() {
-		if (instance == null)
-			instance = new Market();
+	public static Market getPlugin() {
+		if (instance == null) instance = new Market();
 		return instance;
+	}
+
+	public Long getInterval() {
+		return interval;
+	}
+
+	public void setInterval(Long interval) {
+		this.interval = interval;
+	}
+
+	public void setConfig(FileConfiguration config) {
+		this.config = config;
+	}
+
+	public boolean isGuiEnabled() {
+		return isGuiEnabled;
+	}
+
+	public void setGuiEnabled(boolean guiEnabled) {
+		this.isGuiEnabled = guiEnabled;
+	}
+
+	public String getShopCommand() {
+		return shopCommand;
+	}
+
+	public void setShopCommand(String shopCommand) {
+		this.shopCommand = shopCommand;
+	}
+
+	public boolean isUpdate() {
+		return update;
+	}
+
+	public void setUpdate(boolean update) {
+		this.update = update;
+	}
+
+	public Market() {
+		instance = this;
+	}
+
+	public boolean isBoard() {
+		return isBoardEnabled;
+	}
+
+	public void setIsBoard(boolean isBoard) {
+		this.isBoardEnabled = isBoard;
+	}
+
+	public boolean isSignEnabled() {
+		return isSignEnabled;
+	}
+
+	public void setSignEnabled(boolean isSignEnabled) {
+		this.isSignEnabled = isSignEnabled;
+	}
+
+	public CommandTask getCommandTask() {
+		return commandTask;
 	}
 
 }

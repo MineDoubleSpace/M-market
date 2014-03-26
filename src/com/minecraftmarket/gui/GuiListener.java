@@ -6,70 +6,57 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import com.minecraftmarket.Market;
-import com.minecraftmarket.manager.ChatManager;
+import com.minecraftmarket.util.Chat;
 
 public class GuiListener implements Listener {
 
-	private Market plugin;
+	Gui gui = Gui.getInstance();
 
-	public GuiListener(Market plugin) {
-		if (plugin == null)
-			throw new IllegalArgumentException("plugin cannot be null");
-		if (!plugin.isInitialized())
-			throw new IllegalArgumentException("plugin must be initiaized");
-		this.plugin = plugin;
-	}
-
-	Gui gui = Gui.getInatance();
-
-	ChatManager chat = ChatManager.getInstance();
+	Chat chat = Chat.get();
 
 	public String getMsg(String string) {
-		return ChatManager.getInstance().getLanguage().getString(string);
+		return Chat.get().getLanguage().getString(string);
 	}
 
 	@EventHandler
-	public void onInventoryClick(InventoryClickEvent e) {
+	public void onInventoryClick(InventoryClickEvent event) {
 		try {
-			if (e.getInventory().getName().contains("Category: ") || e.getInventory().getName().equals("Categories")) {
-				e.setCancelled(true);
-				if (e.getCurrentItem() == null) {
-					e.setCancelled(true);
+			if (event.getInventory().getName().contains("Category: ") || event.getInventory().getName().equals("Categories")) {
+				event.setCancelled(true);
+				if (event.getCurrentItem() == null) {
+					event.setCancelled(true);
 					return;
 				}
-				if (e.getCurrentItem().getItemMeta() == null) {
-					e.setCancelled(true);
+				if (event.getCurrentItem().getItemMeta() == null) {
+					event.setCancelled(true);
 					return;
 				}
 			}
-			if (e.getInventory().getName().contains("Category: ")) {
-				Player player = (Player) e.getWhoClicked();
-				String name = e.getCurrentItem().getItemMeta().getDisplayName();
+			if (event.getInventory().getName().contains("Category: ")) {
+				Player player = (Player) event.getWhoClicked();
+				String name = event.getCurrentItem().getItemMeta().getDisplayName();
 				if (name.contains("Back to categories")) {
-					e.setCancelled(true);
-					e.getWhoClicked().closeInventory();
-					e.getWhoClicked().openInventory(gui.inventory.get(0));
+					event.setCancelled(true);
+					event.getWhoClicked().closeInventory();
+					gui.showCategories((Player) event.getWhoClicked());
 					return;
 				}
 				String[] id = name.split(": ");
 				int id1 = Integer.parseInt(id[1]);
-				String url = gui.urlMap.get(id1);
-				player.sendMessage(chat.prefix + ChatColor.GOLD + getMsg("shop.item-url") + ChatColor.AQUA + "" + ChatColor.ITALIC + ChatColor.UNDERLINE + url);
-				e.getWhoClicked().closeInventory();
-				e.setCancelled(true);
+				String url = GuiPackage.getById(id1).getUrl();
+				player.sendMessage(chat.prefix + ChatColor.GOLD + getMsg("shop.item-url") + ChatColor.DARK_AQUA + "" + ChatColor.ITALIC + ChatColor.UNDERLINE + url);
+				event.getWhoClicked().closeInventory();
+				event.setCancelled(true);
 				return;
 			}
-			if (e.getInventory().getName().equals("Categories")) {
-				int num = gui.IdMap.get(e.getSlot());
-				e.setCancelled(true);
-				e.getWhoClicked().closeInventory();
-				e.getWhoClicked().openInventory(gui.inventory.get(num));
+			if (event.getInventory().getName().equals("Categories")) {
+				int num = GuiCategory.getCategoryBySlot(event.getSlot()).getID();
+				event.setCancelled(true);
+				event.getWhoClicked().closeInventory();
+				gui.showGui((Player) event.getWhoClicked(), num);
 			}
 		} catch (Exception e1) {
-			if (plugin.debug) {
-				e1.printStackTrace();
-			}
+
 		}
 	}
 

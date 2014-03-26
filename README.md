@@ -1,4 +1,0 @@
-MinecraftMarketPlugin
-=====================
-
-MinecraftMarket offcial repo

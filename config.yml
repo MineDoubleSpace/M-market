@@ -1,6 +1,10 @@
     
      # == Minecraft Market Config! == #
    
+#Version. Do not change this
+version: '1.7'
+
+
 # Enable/Disable the plugin
 Enabled: true
 
@@ -15,6 +19,10 @@ Interval: 90
 
 #Enable/Disable GUI(Inventory Store)
 Enabled-GUI: true
+
+
+#Enable/Disable recent donor signs
+Enabled-signs: true
 
 
 #Shop-Command, this command will open In-Game shop. Warning: Must start with "/<command>"

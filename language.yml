@@ -6,7 +6,8 @@ messages:
   prefix: "&f[&2MinecraftMarket&f]"
   no-permissions: "you do not have access to that command."
   reload: " Configuration reloaded."
-  check: " Checking for new purchases...123"
+  check: " Checking for new purchases.."
+  signs: " Updating signs.."
   url: " Item URL: "
   
 
@@ -20,4 +21,9 @@ shop:
   price: "Price: "
   click-here: "*Click here to buy"
   item-url: "Item URL: "
+  
+#====  Signs ====#
+signs:
+  no-permissions: You do not have access to create signs
+  created: Sign created and updating..
 
