@@ -16,7 +16,6 @@ import com.minecraftmarket.util.Init;
 import com.minecraftmarket.util.Log;
 import com.minecraftmarket.util.Metric;
 import com.minecraftmarket.util.Settings;
-import com.minecraftmarket.util.Update;
 
 public class Market extends JavaPlugin {
 	private Long interval;
@@ -47,7 +46,7 @@ public class Market extends JavaPlugin {
 
 			startMetrics();
 
-			startUpdate();
+			//TODO update plugin
 
 			startTasks();
 
@@ -110,11 +109,6 @@ public class Market extends JavaPlugin {
 		}
 	}
 
-	private void startUpdate() {
-		if (this.update) {
-			new Update(this, "minecraft-market-free-donation", this.getFile(), Update.UpdateType.DEFAULT, true);
-		}
-	}
 
 	private void startGUI() {
 		if (isGuiEnabled) {
