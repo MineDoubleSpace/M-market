@@ -1,5 +1,6 @@
 package com.minecraftmarket;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -16,6 +17,7 @@ import com.minecraftmarket.util.Init;
 import com.minecraftmarket.util.Log;
 import com.minecraftmarket.util.Metric;
 import com.minecraftmarket.util.Settings;
+import com.minecraftmarket.util.Update;
 
 public class Market extends JavaPlugin {
 	private Long interval;
@@ -27,7 +29,7 @@ public class Market extends JavaPlugin {
 	private boolean isGuiEnabled;
 	private static Market instance;
 	private CommandTask commandTask;
-	
+
 	@Override
 	public void onDisable() {
 		stopTasks();
@@ -46,8 +48,6 @@ public class Market extends JavaPlugin {
 
 			startMetrics();
 
-			//TODO update plugin
-
 			startTasks();
 
 		} catch (Exception e) {
@@ -56,10 +56,12 @@ public class Market extends JavaPlugin {
 	}
 
 	public void reload() {
-		
+
 		Init.start();
-		
+
 		loadConfigOptions();
+		
+		checkUpdate();
 
 		if (authApi()) {
 
@@ -70,7 +72,6 @@ public class Market extends JavaPlugin {
 
 	}
 
-
 	private void loadConfigOptions() {
 		Chat.get().SetupDefaultLanguage();
 		config = Settings.get().getConfig();
@@ -78,8 +79,7 @@ public class Market extends JavaPlugin {
 		this.interval = Math.max(config.getLong("Interval", 90L), 10L);
 		this.isGuiEnabled = config.getBoolean("Enabled-GUI", true);
 		this.shopCommand = config.getString("Shop-Command", "/shop");
-		this.update = config.getBoolean("Auto-update", true);
-		this.isBoardEnabled = false;
+		this.update = config.getBoolean("auto-update", true);
 		this.isSignEnabled = config.getBoolean("Enabled-signs", true);
 		Log.setDebugging(config.getBoolean("Debug", false));
 	}
@@ -108,7 +108,6 @@ public class Market extends JavaPlugin {
 			Log.log(e);
 		}
 	}
-
 
 	private void startGUI() {
 		if (isGuiEnabled) {
@@ -140,6 +139,12 @@ public class Market extends JavaPlugin {
 		Settings.get().LoadSettings();
 	}
 
+	private void checkUpdate() {
+		if (update) {
+			new Update();
+		}
+	}
+
 	private void stopTasks() {
 		getServer().getScheduler().cancelTasks(this);
 		getLogger().info("Plugin disabled");
@@ -164,6 +169,10 @@ public class Market extends JavaPlugin {
 
 	public boolean isGuiEnabled() {
 		return isGuiEnabled;
+	}
+
+	public File getPluginFile() {
+		return this.getFile();
 	}
 
 	public void setGuiEnabled(boolean guiEnabled) {
