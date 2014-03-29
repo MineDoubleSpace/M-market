@@ -38,10 +38,13 @@ public class Log {
 	}
 
 	public static void response(String name, String s) {
-		if (debug) log(" ");
-		log("   ------------- " + " MinecraftMarket Debug " + name + " -------------    ");
-		log("   " + s);
-		log("   --------------------------------------------------------------------   ");
+		if (debug) {
+			log("   ------------- " + " MinecraftMarket Debug " + name + " -------------    ");
+			log("   " + s);
+			log("   --------------------------------------------------------------------   ");
+			log(" ");
+		}
+
 	}
 
 	public static void setDebugging(boolean debug) {

@@ -53,7 +53,15 @@ public class Gui {
 						guiHub = createInventory("Categories", getInventorySize(categoryArray.length()));
 						for (int cate = 0; cate < categoryArray.length(); cate++) {
 							String name = getJsonString(categoryArray, cate, "name");
-							guiHub.setItem(cate, Createcategory(name));
+							String icon = getJsonString(categoryArray, cate, "iconid");
+							try {
+								if (icon.equalsIgnoreCase("null") || icon.equals("")) {
+									icon = "130";
+								}
+							} catch (Exception e) {
+								icon = "130";
+							}
+							guiHub.setItem(cate, Createcategory(name, icon));
 						}
 					}
 					int id = getJsonInt(categoryArray, i, "id");
@@ -150,14 +158,25 @@ public class Gui {
 		return total > 5 ? 54 : total * 9;
 	}
 
-	private ItemStack Createcategory(String name) {
-		ItemStack item = new ItemStack(Material.ENDER_CHEST, 1);
+	@SuppressWarnings("deprecation")
+	private ItemStack Createcategory(String name, String icon) {
+		int id = 130;
+		byte data = 0;
+		if (icon.contains(":")) {
+			String[] icons = icon.split(":");
+			id = Integer.parseInt(icons[0]);
+			data = (byte) Integer.parseInt(icons[1]);
+		}else {
+			id = Integer.parseInt(icon);
+		}
+		ItemStack item = new ItemStack(id, 1, (short) 0, data);
 		ItemMeta im = item.getItemMeta();
 		im.setDisplayName(ChatColor.GOLD + name);
 		im.setLore(Arrays.asList("", "*Click here to open " + name + " category"));
 		item.setItemMeta(im);
 		return item;
 	}
+	
 
 	private Inventory createInventory(String name, int size) {
 		Inventory inv;

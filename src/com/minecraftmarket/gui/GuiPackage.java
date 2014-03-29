@@ -6,10 +6,10 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 
 import com.google.common.collect.Lists;
 import com.minecraftmarket.util.Chat;
+import com.minecraftmarket.util.Log;
 
 public class GuiPackage {
 
@@ -27,6 +27,7 @@ public class GuiPackage {
 	private String price;
 	private String iconID;
 
+	@SuppressWarnings("deprecation")
 	public GuiPackage(int id, String name, String currency, String price, String category, String description, String url, String iconID) {
 		this.iconID = iconID;
 		this.material = getMaterialType();
@@ -36,23 +37,27 @@ public class GuiPackage {
 		this.currency = currency;
 		this.price = price;
 		this.description = description;
-		this.icon = new ItemStack(material, 1);
+		this.icon = new ItemStack(material, 1, (short) 0, getMaterialData());
 		this.category = category;
 		this.meta = this.icon.getItemMeta();
 	}
 
 	public void create() {
-		packages.add(this);
-		meta.setDisplayName(ChatColor.RESET + "ID: " + id);
-		createLore();
-		icon.setItemMeta(meta);
-		icon.setData(getMaterialData());
+		try {
+			packages.add(this);
+			meta.setDisplayName(ChatColor.RESET + "ID: " + id);
+			createLore();
+			icon.setItemMeta(meta);
+		} catch (Exception e) {
+			Log.log(e);
+		}
+
 	}
 
 	public void remove() {
 		packages.remove(this);
 	}
-	
+
 	public static void removeAll() {
 		packages.clear();
 	}
@@ -78,23 +83,20 @@ public class GuiPackage {
 		lore.add("");
 		lore.add(ChatColor.ITALIC + Chat.get().getMsg("shop.click-here"));
 		meta.setLore(lore);
-
 	}
 
-	@SuppressWarnings("deprecation")
-	private MaterialData getMaterialData() {
-		int iconid;
-		byte bit;
+	private byte getMaterialData() {
+		byte data = 0;
 		try {
 			if (this.iconID.contains(":")) {
 				String[] s = this.iconID.split(":");
-				iconid = Integer.parseInt(s[0]);
-				bit = (byte) Integer.parseInt(s[1]);
-				return new MaterialData(iconid, bit);
+				data = (byte) Integer.parseInt(s[1]);
+				return data;
 			}
-			return new MaterialData(Integer.parseInt(iconID));
+			return 0;
 		} catch (Exception e) {
-			return new MaterialData(Material.CHEST);
+			Log.log(e);
+			return 0;
 		}
 	}
 
@@ -110,6 +112,7 @@ public class GuiPackage {
 			iconid = Integer.parseInt(iconID);
 			return Material.getMaterial(iconid);
 		} catch (Exception e) {
+			Log.log(e);
 			return Material.CHEST;
 		}
 	}
