@@ -53,12 +53,13 @@ public class Gui {
 						guiHub = createInventory("Categories", getInventorySize(categoryArray.length()));
 						for (int cate = 0; cate < categoryArray.length(); cate++) {
 							String name = getJsonString(categoryArray, cate, "name");
-							String icon = getJsonString(categoryArray, cate, "iconid");
+							String icon = "130";
 							try {
-								if (icon.equalsIgnoreCase("null") || icon.equals("")) {
-									icon = "130";
-								}
+								icon = getJsonString(categoryArray, cate, "iconid");
 							} catch (Exception e) {
+								icon = "130";
+							}
+							if (icon.equalsIgnoreCase("null") || icon.equals("")) {
 								icon = "130";
 							}
 							guiHub.setItem(cate, Createcategory(name, icon));
@@ -166,7 +167,7 @@ public class Gui {
 			String[] icons = icon.split(":");
 			id = Integer.parseInt(icons[0]);
 			data = (byte) Integer.parseInt(icons[1]);
-		}else {
+		} else {
 			id = Integer.parseInt(icon);
 		}
 		ItemStack item = new ItemStack(id, 1, (short) 0, data);
@@ -176,7 +177,6 @@ public class Gui {
 		item.setItemMeta(im);
 		return item;
 	}
-	
 
 	private Inventory createInventory(String name, int size) {
 		Inventory inv;
