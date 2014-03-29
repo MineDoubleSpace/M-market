@@ -1,4 +1,4 @@
-package com.minecraftmarket.gui;
+package com.minecraftmarket.shop;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -8,9 +8,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 
 import com.minecraftmarket.util.Chat;
 
-public class GuiListener implements Listener {
+public class ShopListener implements Listener {
 
-	Gui gui = Gui.getInstance();
+	Shop gui = Shop.getInstance();
 
 	Chat chat = Chat.get();
 
@@ -43,14 +43,14 @@ public class GuiListener implements Listener {
 				}
 				String[] id = name.split(": ");
 				int id1 = Integer.parseInt(id[1]);
-				String url = GuiPackage.getById(id1).getUrl();
+				String url = ShopPackage.getById(id1).getUrl();
 				player.sendMessage(chat.prefix + ChatColor.GOLD + getMsg("shop.item-url") + ChatColor.DARK_AQUA + "" + ChatColor.ITALIC + ChatColor.UNDERLINE + url);
 				event.getWhoClicked().closeInventory();
 				event.setCancelled(true);
 				return;
 			}
 			if (event.getInventory().getName().equals("Categories")) {
-				int num = GuiCategory.getCategoryBySlot(event.getSlot()).getID();
+				int num = ShopCategory.getCategoryBySlot(event.getSlot()).getID();
 				event.setCancelled(true);
 				event.getWhoClicked().closeInventory();
 				gui.showGui((Player) event.getWhoClicked(), num);

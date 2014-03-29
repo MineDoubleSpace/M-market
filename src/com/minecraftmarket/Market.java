@@ -7,9 +7,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.minecraftmarket.command.CommandTask;
-import com.minecraftmarket.gui.GuiListener;
-import com.minecraftmarket.gui.GuiTask;
 import com.minecraftmarket.mcommands.Commands;
+import com.minecraftmarket.shop.ShopListener;
+import com.minecraftmarket.shop.ShopTask;
 import com.minecraftmarket.signs.SignListener;
 import com.minecraftmarket.signs.SignsTask;
 import com.minecraftmarket.util.Chat;
@@ -85,7 +85,7 @@ public class Market extends JavaPlugin {
 	}
 
 	private void registerEvents() {
-		getServer().getPluginManager().registerEvents(new GuiListener(), this);
+		getServer().getPluginManager().registerEvents(new ShopListener(), this);
 		getServer().getPluginManager().registerEvents(new ShopCommand(), this);
 		getServer().getPluginManager().registerEvents(new SignListener(), this);
 	}
@@ -111,7 +111,7 @@ public class Market extends JavaPlugin {
 
 	private void startGUI() {
 		if (isGuiEnabled) {
-			new GuiTask().runTaskLater(this, 20L);
+			new ShopTask().runTaskLater(this, 20L);
 
 		}
 	}

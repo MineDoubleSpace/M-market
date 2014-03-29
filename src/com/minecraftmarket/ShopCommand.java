@@ -4,7 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
-import com.minecraftmarket.gui.Gui;
+import com.minecraftmarket.shop.Shop;
 
 public class ShopCommand implements Listener {
 
@@ -15,7 +15,7 @@ public class ShopCommand implements Listener {
 			if (!Market.getPlugin().isGuiEnabled()) {
 				return;
 			} else {
-				Gui.getInstance().showCategories(event.getPlayer());
+				Shop.getInstance().showCategories(event.getPlayer());
 				return;
 			}
 		}

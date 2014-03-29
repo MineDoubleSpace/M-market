@@ -1,4 +1,4 @@
-package com.minecraftmarket.gui;
+package com.minecraftmarket.shop;
 
 import java.util.List;
 
@@ -6,15 +6,15 @@ import org.bukkit.inventory.Inventory;
 
 import com.google.common.collect.Lists;
 
-public class GuiCategory {
+public class ShopCategory {
 
-	private static List<GuiCategory> categories = Lists.newArrayList();
+	private static List<ShopCategory> categories = Lists.newArrayList();
 	private int ID;
 	private int slot;
 	private String name;
 	private Inventory inventory;
 
-	public GuiCategory(String name, int ID, int slot, Inventory inventory) {
+	public ShopCategory(String name, int ID, int slot, Inventory inventory) {
 		this.name = name;
 		this.ID = ID;
 		this.slot = slot;
@@ -41,8 +41,8 @@ public class GuiCategory {
 		if (!categories.contains(this)) categories.add(this);
 	}
 
-	public static GuiCategory getCategoryByID(int ID) {
-		for (GuiCategory category : categories) {
+	public static ShopCategory getCategoryByID(int ID) {
+		for (ShopCategory category : categories) {
 			if (category.getID() == ID) {
 				return category;
 			}
@@ -54,19 +54,19 @@ public class GuiCategory {
 		categories.remove(this);
 	}
 
-	public static List<GuiCategory> getCategories() {
+	public static List<ShopCategory> getCategories() {
 		return categories;
 	}
 
 	public static void removeAll() {
-		for (GuiCategory gc : categories) {
+		for (ShopCategory gc : categories) {
 			gc.getInventory().clear();
 		}
 		categories.clear();
 	}
 
-	public static GuiCategory getCategoryBySlot(int slot) {
-		for (GuiCategory category : categories) {
+	public static ShopCategory getCategoryBySlot(int slot) {
+		for (ShopCategory category : categories) {
 			if (category.getSlot() == slot) {
 				return category;
 			}

@@ -1,4 +1,4 @@
-package com.minecraftmarket.gui;
+package com.minecraftmarket.shop;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import com.google.common.collect.Lists;
 import com.minecraftmarket.util.Chat;
 import com.minecraftmarket.util.Log;
 
-public class GuiPackage {
+public class ShopPackage {
 
-	static List<GuiPackage> packages = Lists.newArrayList();
+	static List<ShopPackage> packages = Lists.newArrayList();
 
 	private String name;
 	private ItemStack icon;
@@ -28,7 +28,7 @@ public class GuiPackage {
 	private String iconID;
 
 	@SuppressWarnings("deprecation")
-	public GuiPackage(int id, String name, String currency, String price, String category, String description, String url, String iconID) {
+	public ShopPackage(int id, String name, String currency, String price, String category, String description, String url, String iconID) {
 		this.iconID = iconID;
 		this.material = getMaterialType();
 		this.name = name;
@@ -62,7 +62,7 @@ public class GuiPackage {
 		packages.clear();
 	}
 
-	public static List<GuiPackage> getCategories() {
+	public static List<ShopPackage> getCategories() {
 		return packages;
 	}
 
@@ -117,14 +117,14 @@ public class GuiPackage {
 		}
 	}
 
-	public static GuiPackage getById(int id) {
-		for (GuiPackage gp : packages) {
+	public static ShopPackage getById(int id) {
+		for (ShopPackage gp : packages) {
 			if (gp.getId() == id) return gp;
 		}
 		return null;
 	}
 
-	public static List<GuiPackage> getPackages() {
+	public static List<ShopPackage> getPackages() {
 		return packages;
 	}
 

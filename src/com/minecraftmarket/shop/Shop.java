@@ -1,4 +1,4 @@
-package com.minecraftmarket.gui;
+package com.minecraftmarket.shop;
 
 import java.util.Arrays;
 
@@ -17,9 +17,9 @@ import com.minecraftmarket.Api;
 import com.minecraftmarket.util.Json;
 import com.minecraftmarket.util.Log;
 
-public class Gui {
+public class Shop {
 
-	static Gui instance;
+	static Shop instance;
 	private Inventory guiHub;
 
 	public void setupGUI() {
@@ -27,7 +27,7 @@ public class Gui {
 	}
 
 	public void showGui(Player player, int num) {
-		GuiCategory catetory = GuiCategory.getCategoryByID(num);
+		ShopCategory catetory = ShopCategory.getCategoryByID(num);
 		if (catetory.getInventory() != null) {
 			player.openInventory(catetory.getInventory());
 			return;
@@ -50,6 +50,8 @@ public class Gui {
 				int max = itemArray.length();
 				for (int i = 0; i < categoryArray.length(); i++) {
 					if (i == 0) {
+						
+						//Creating categories hub
 						guiHub = createInventory("Categories", getInventorySize(categoryArray.length()));
 						for (int cate = 0; cate < categoryArray.length(); cate++) {
 							String name = getJsonString(categoryArray, cate, "name");
@@ -65,10 +67,14 @@ public class Gui {
 							guiHub.setItem(cate, Createcategory(name, icon));
 						}
 					}
+					
+					//Creating single category packages
 					int id = getJsonInt(categoryArray, i, "id");
 					String name = "Category: " + getJsonString(categoryArray, i, "name");
 					int InvSize = itemCount(id, itemArray);
 					Inventory inv = createInventory(name, getInventorySize(InvSize + 1));
+					
+					// Adding packages to caregory
 					int placement = 0;
 					for (int t = 0; t < max; t++) {
 						int iid = getJsonInt(itemArray, t, "categoryid");
@@ -78,7 +84,10 @@ public class Gui {
 						}
 					}
 					inv.setItem(inv.getSize() - 1, createCategoryPage());
-					GuiCategory category = new GuiCategory(name, id, i, inv);
+					
+					//Setting up new category
+					ShopCategory category = new ShopCategory(name, id, i, inv);
+					//Create || adding to GUI
 					category.create();
 				}
 			}
@@ -103,8 +112,8 @@ public class Gui {
 		if (guiHub != null) {
 			guiHub.clear();
 		}
-		GuiCategory.removeAll();
-		GuiPackage.removeAll();
+		ShopCategory.removeAll();
+		ShopPackage.removeAll();
 	}
 
 	private ItemStack createItem(int i, JSONArray jsonresult) {
@@ -125,7 +134,7 @@ public class Gui {
 				String description = jsonresult.getJSONObject(i).getString("description");
 
 				//Create GUI package
-				GuiPackage guiPackage = new GuiPackage(id, name, currency, price, cate, description, url, icon);
+				ShopPackage guiPackage = new ShopPackage(id, name, currency, price, cate, description, url, icon);
 				guiPackage.create();
 				return guiPackage.getItem();
 			} catch (Exception e) {
@@ -188,11 +197,11 @@ public class Gui {
 		return inv;
 	}
 
-	public static Gui getInstance() {
-		if (instance == null) instance = new Gui();
+	public static Shop getInstance() {
+		if (instance == null) instance = new Shop();
 		return instance;
 	}
 
-	private Gui() {
+	private Shop() {
 	}
 }
