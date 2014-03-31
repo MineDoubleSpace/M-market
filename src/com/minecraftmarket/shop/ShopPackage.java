@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -48,6 +49,9 @@ public class ShopPackage {
 			meta.setDisplayName(ChatColor.RESET + "ID: " + id);
 			createLore();
 			icon.setItemMeta(meta);
+			for(Enchantment en : icon.getEnchantments().keySet()) {
+				icon.removeEnchantment(en);
+			}
 		} catch (Exception e) {
 			Log.log(e);
 		}

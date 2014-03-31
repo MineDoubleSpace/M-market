@@ -22,6 +22,7 @@ public class Commands implements CommandExecutor {
 		commands.add(new Apikey());
 		commands.add(new Check());
 		commands.add(new Reload());
+		commands.add(new Recent());
 		commands.add(new Signs());
 		commands.add(new Version());
 	}
