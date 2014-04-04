@@ -116,7 +116,6 @@ public class ShopPackage {
 			iconid = Integer.parseInt(iconID);
 			return Material.getMaterial(iconid);
 		} catch (Exception e) {
-			Log.log(e);
 			return Material.CHEST;
 		}
 	}

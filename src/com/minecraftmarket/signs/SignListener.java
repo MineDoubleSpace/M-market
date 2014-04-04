@@ -1,11 +1,11 @@
 package com.minecraftmarket.signs;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.SignChangeEvent;
+
 import com.minecraftmarket.Market;
 import com.minecraftmarket.util.Chat;
 
@@ -25,8 +25,8 @@ public class SignListener implements Listener {
 			try {
 				int id = Integer.parseInt(event.getLine(1));
 				Location loc = event.getBlock().getLocation();
-				Signs.getSigns().createSign(loc, id-1);
-				Bukkit.getScheduler().runTaskAsynchronously(plugin, new AsyncSignUpdate());
+				SignData signData = new SignData(loc, id-1);
+				signData.update();
 				event.getPlayer().sendMessage(chat.prefix + ChatColor.GREEN + Chat.get().getLanguage().getString(("signs.created")));
 			} catch (NumberFormatException ex) {
 				event.getBlock().breakNaturally();

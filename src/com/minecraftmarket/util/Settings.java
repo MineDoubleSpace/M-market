@@ -15,26 +15,36 @@ public class Settings {
 	private File languageFile;
 	private FileConfiguration language;
 	private FileConfiguration sign;
-	
+
 	private Market plugin = Market.getPlugin();
 
 	public void LoadSettings() {
 		signFile = new File(Market.getPlugin().getDataFolder(), "signs.yml");
 		languageFile = new File(Market.getPlugin().getDataFolder(), "language.yml");
-		
+
 		Market.getPlugin().saveDefaultConfig();
 		CreateFile("signs.yml", signFile, false, true);
 		CreateFile("language.yml", languageFile, false, true);
-		
+
 		reloadConfig();
 		reloadSignDatabase();
 		reloadLanguageConfig();
+
+		File test = new File(Market.getPlugin().getDataFolder(), "test.conf");
+
+		if (!test.exists()) {
+			try {
+				test.createNewFile();
+			} catch (IOException e) {
+				Log.log(e);
+			}
+		}
 	}
-	
+
 	public void saveConfig() {
 		Market.getPlugin().saveConfig();
 	}
-	
+
 	public void saveAll() {
 		try {
 			Market.getPlugin().saveConfig();
@@ -44,41 +54,41 @@ public class Settings {
 			Log.log(e);
 		}
 	}
-	
+
 	public void saveSignDatabase() {
 		try {
 			sign.save(signFile);
 		} catch (IOException e) {
 		}
 	}
-	
+
 	public void saveLanguageFile() {
 		try {
 			language.save(languageFile);
 		} catch (IOException e) {
 		}
 	}
-	
+
 	public FileConfiguration getConfig() {
 		return Market.getPlugin().getConfig();
 	}
-	
+
 	public FileConfiguration getSignDatabase() {
 		return sign;
 	}
-	
+
 	public FileConfiguration getLanguageFile() {
 		return language;
 	}
-	
+
 	public void reloadConfig() {
 		Market.getPlugin().reloadConfig();
 	}
-	
+
 	public void reloadSignDatabase() {
 		sign = YamlConfiguration.loadConfiguration(signFile);
 	}
-	
+
 	public void reloadLanguageConfig() {
 		language = YamlConfiguration.loadConfiguration(languageFile);
 	}
@@ -104,8 +114,8 @@ public class Settings {
 			Log.log(e);
 		}
 	}
-	
-	public static Settings get(){
+
+	public static Settings get() {
 		if (instance == null) instance = new Settings();
 		return instance;
 	}

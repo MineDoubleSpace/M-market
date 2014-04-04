@@ -6,14 +6,13 @@ import com.minecraftmarket.Market;
 
 public class SignsTask {
 
-	private BukkitTask task;
-
-	public Market plugin = Market.getPlugin();
+	private static BukkitTask task;
 
 	public void startSignTask() {
-		Signs.getSigns().updateSignLocation();
+		Signs.getSigns().updateJson();
+		Signs.getSigns().setup();
 		if (task != null) task.cancel();
-		task = new AsyncSignUpdate().runTaskTimer(plugin, 600L, plugin.getInterval() * 20);
+		task = new SignUpdate().runTaskTimer(Market.getPlugin(), 600L, Market.getPlugin().getInterval() * 20);
 	}
 
 }
