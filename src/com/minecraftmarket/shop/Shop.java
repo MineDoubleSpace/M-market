@@ -121,7 +121,7 @@ public class Shop {
 			try {
 				String name = getJsonString(jsonresult, i, "name");
 				String cate = getJsonString(jsonresult, i, "category");
-				String url = jsonresult.getJSONObject(i).getJSONArray("url").getJSONObject(0).getString("url");
+				String url = getJsonString(jsonresult, i, "url");
 				String price = getJsonString(jsonresult, i, "price");
 				int id = getJsonInt(jsonresult, i, "id");
 				String icon;

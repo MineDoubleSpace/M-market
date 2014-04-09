@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import com.minecraftmarket.command.CommandTask;
 import com.minecraftmarket.mcommands.Commands;
+import com.minecraftmarket.recentgui.RecentListener;
 import com.minecraftmarket.shop.ShopListener;
 import com.minecraftmarket.shop.ShopTask;
 import com.minecraftmarket.signs.SignListener;
@@ -88,6 +89,7 @@ public class Market extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new ShopListener(), this);
 		getServer().getPluginManager().registerEvents(new ShopCommand(), this);
 		getServer().getPluginManager().registerEvents(new SignListener(), this);
+		getServer().getPluginManager().registerEvents(new RecentListener(), this);
 	}
 
 	private boolean authApi() {

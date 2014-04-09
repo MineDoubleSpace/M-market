@@ -10,7 +10,7 @@ import com.minecraftmarket.util.Settings;
 public class Api {
 
 	private static String APIKEY;
-	private static final String APIURL = "http://www.minecraftmarket.com/api/";
+	private static final String APIURL = "http://www.minecraftmarket.com/api/1.5/";
 
 	public static void setApikey(String apiKey) {
 		APIKEY = apiKey;
