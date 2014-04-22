@@ -30,6 +30,7 @@ public class Market extends JavaPlugin {
 	private boolean isGuiEnabled;
 	private static Market instance;
 	private CommandTask commandTask;
+	private SignsTask signTask;
 
 	@Override
 	public void onDisable() {
@@ -52,14 +53,14 @@ public class Market extends JavaPlugin {
 			startTasks();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.log(e);
 		}
 	}
 
 	public void reload() {
 
 		Init.start();
-
+		
 		loadConfigOptions();
 		
 		checkUpdate();
@@ -114,7 +115,6 @@ public class Market extends JavaPlugin {
 	private void startGUI() {
 		if (isGuiEnabled) {
 			new ShopTask().runTaskLater(this, 20L);
-
 		}
 	}
 
@@ -125,7 +125,8 @@ public class Market extends JavaPlugin {
 
 	private void startSignTasks() {
 		if (isSignEnabled()) {
-			new SignsTask().startSignTask();
+			signTask = new SignsTask();
+			signTask.startSignTask();
 		}
 	}
 
@@ -148,8 +149,8 @@ public class Market extends JavaPlugin {
 	}
 
 	private void stopTasks() {
+		signTask.cancel();
 		getServer().getScheduler().cancelTasks(this);
-		getLogger().info("Plugin disabled");
 	}
 
 	public static Market getPlugin() {

@@ -87,13 +87,13 @@ public class CommandExecutor extends BukkitRunnable {
 	public void execute() {
 		if (!isPlayerOnline()) {
 			Log.debug("Setting \"/" + command + "\" as pending. Player must be online to execute this command.");
-			setPending();
+			this.setPending();
 			return;
 		}
 
 		if (!hasRequiredSlots()) {
 			Log.debug("Setting \"/" + command + "\" as pending. Required slots for command was not met.");
-			setPending();
+			this.setPending();
 			return;
 		}
 		executed();

@@ -14,5 +14,9 @@ public class SignsTask {
 		if (task != null) task.cancel();
 		task = new SignUpdate().runTaskTimer(Market.getPlugin(), 600L, Market.getPlugin().getInterval() * 20);
 	}
+	
+	public void cancel() {
+		task.cancel();
+	}
 
 }
