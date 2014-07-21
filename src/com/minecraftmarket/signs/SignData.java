@@ -129,7 +129,9 @@ public class SignData {
 
 	public static SignData getSignByLocation(Location location) {
 		for (SignData sd : signs) {
-			if (location == sd.getLocation()) return sd;
+			if (location.getBlockX() == sd.getLocation().getBlockX() && location.getBlockY() == sd.getLocation().getBlockY() && location.getBlockZ() == sd.getLocation().getBlockZ()) {
+				return sd;
+			}
 		}
 		return null;
 	}

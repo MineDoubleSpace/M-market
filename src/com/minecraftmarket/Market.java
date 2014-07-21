@@ -12,7 +12,7 @@ import com.minecraftmarket.recentgui.RecentListener;
 import com.minecraftmarket.shop.ShopListener;
 import com.minecraftmarket.shop.ShopTask;
 import com.minecraftmarket.signs.SignListener;
-import com.minecraftmarket.signs.SignsTask;
+import com.minecraftmarket.signs.SignUpdate;
 import com.minecraftmarket.util.Chat;
 import com.minecraftmarket.util.Init;
 import com.minecraftmarket.util.Log;
@@ -30,7 +30,7 @@ public class Market extends JavaPlugin {
 	private boolean isGuiEnabled;
 	private static Market instance;
 	private CommandTask commandTask;
-	private SignsTask signTask;
+	private SignUpdate signUpdate;
 
 	@Override
 	public void onDisable() {
@@ -58,18 +58,21 @@ public class Market extends JavaPlugin {
 	}
 
 	public void reload() {
+		try {
+			Init.start();
 
-		Init.start();
-		
-		loadConfigOptions();
-		
-		checkUpdate();
+			loadConfigOptions();
 
-		if (authApi()) {
+			checkUpdate();
 
-			startGUI();
+			if (authApi()) {
 
-			startSignTasks();
+				startGUI();
+
+				startSignTasks();
+			}
+		} catch (Exception e) {
+			Log.log(e);
 		}
 
 	}
@@ -125,8 +128,8 @@ public class Market extends JavaPlugin {
 
 	private void startSignTasks() {
 		if (isSignEnabled()) {
-			signTask = new SignsTask();
-			signTask.startSignTask();
+			signUpdate = new SignUpdate();
+			signUpdate.startSignTask();
 		}
 	}
 
@@ -149,8 +152,12 @@ public class Market extends JavaPlugin {
 	}
 
 	private void stopTasks() {
-		signTask.cancel();
-		getServer().getScheduler().cancelTasks(this);
+		try {
+			signUpdate.cancel();
+			getServer().getScheduler().cancelTasks(this);
+		} catch (Exception e) {
+			Log.log(e);
+		}
 	}
 
 	public static Market getPlugin() {

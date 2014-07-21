@@ -30,15 +30,6 @@ public class Settings {
 		reloadSignDatabase();
 		reloadLanguageConfig();
 
-		File test = new File(Market.getPlugin().getDataFolder(), "test.conf");
-
-		if (!test.exists()) {
-			try {
-				test.createNewFile();
-			} catch (IOException e) {
-				Log.log(e);
-			}
-		}
 	}
 
 	public void saveConfig() {

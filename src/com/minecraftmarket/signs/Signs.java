@@ -5,10 +5,12 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.event.Listener;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.minecraftmarket.Api;
+import com.minecraftmarket.Market;
 import com.minecraftmarket.util.Json;
 import com.minecraftmarket.util.Log;
 import com.minecraftmarket.util.Settings;
@@ -31,17 +33,7 @@ public class Signs implements Listener {
 	private static Signs instance;
 
 	public void updateJson() {
-		try {
-			String recent = Json.getJSON(Api.getUrl() + "/recentdonor");
-			Log.response("Recent payment", recent);
-			if (!Json.isJson(recent)) {
-				return;
-			}
-			JSONObject jsono = new JSONObject(recent);
-			json = jsono.optJSONArray("result");
-		} catch (Exception e) {
-			Log.log(e);
-		}
+		new JsonUpdate().runTaskAsynchronously(Market.getPlugin());
 	}
 	
 	public void setup(){
@@ -70,6 +62,26 @@ public class Signs implements Listener {
 
 	private Double convertDouble(String str) {
 		return Double.parseDouble(str);
+	}
+	
+	class JsonUpdate extends BukkitRunnable {
+
+		@Override
+		public void run() {
+			try {
+				String recent = Json.getJSON(Api.getUrl() + "/recentdonor");
+				Log.response("Recent payment", recent);
+				if (!Json.isJson(recent)) {
+					return;
+				}
+				JSONObject jsono = new JSONObject(recent);
+				json = jsono.optJSONArray("result");
+			} catch (Exception e) {
+				Log.log(e);
+			}
+			
+		}
+		
 	}
 
 }
