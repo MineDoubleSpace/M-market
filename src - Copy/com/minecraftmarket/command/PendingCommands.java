@@ -72,6 +72,10 @@ public class PendingCommands {
 			Log.log(e);
 		}
 	}
+	
+	public static void removeAll() {
+		pending.clear();
+	}
 
 	public static PendingCommands getById(int id) {
 		for (PendingCommands pc : getAll()) {

@@ -76,12 +76,14 @@ public class CommandExecutor extends BukkitRunnable {
 			CommandExecutor executor = new CommandExecutor(pc.getId(), pc.getUsername(), pc.getCommand(), pc.getSlots(), pc.getDelay(), pc.isOnline());
 			executor.execute();
 		}
+		PendingCommands.removeAll();
 	}
 
 	public static void clean() {
 		for (int id : executed) {
 			PendingCommands.remove(id);
 		}
+
 	}
 
 	public void execute() {
