@@ -195,7 +195,7 @@ public class Metric {
 		boolean onlineMode = Bukkit.getServer().getOnlineMode();
 		String pluginVersion = description.getVersion();
 		String serverVersion = Bukkit.getVersion();
-		int playersOnline = Bukkit.getServer().getOnlinePlayers().length;
+		int playersOnline = Bukkit.getServer().getOnlinePlayers().size();
 
 		StringBuilder json = new StringBuilder(1024);
 		json.append('{');
